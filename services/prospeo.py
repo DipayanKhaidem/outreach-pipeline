@@ -1,12 +1,12 @@
 import requests
 from config import PROSPEO_API_KEY
 
-def find_contacts(domains):
-    if not domains:
+def find_contacts(domain):
+    if not domain:
         print("No domains provided to prospeo")
         return []
     
-    print(f"Querying Prospeo for contacts across {len(domains)} domains ....")
+    print(f"Querying Prospeo for contacts across {len(domain)} domains ....")
     url="https://api.prospeo.io/search-person"
 
     headers={
@@ -14,21 +14,23 @@ def find_contacts(domains):
         "X-KEY":PROSPEO_API_KEY
     }
 
-    payload={
-        "page":1,
-        "filters":{
-            "company":{
-                "websites":{
-                    "include":[domains]
-                }
-            },
-            # "person_seniority":{
-            #     "include":["Founder/Owner"]
-            # }
+  
+  
+    clean_domain = domain.replace("https://", "").replace("http://", "").replace("www.", "").replace("/", "").strip()
 
+    print(f"    -> Querying Prospeo for: {clean_domain}")
+
+   
+    payload = {
+        "page": 1,
+        "filters": {
+            "company": {
+                "websites": {
+                    "include": [clean_domain] 
+                }
+            }
         }
     }
-
     try:
         response=requests.post(url,json=payload,headers=headers)
 

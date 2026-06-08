@@ -1,7 +1,7 @@
 import requests
 from config import PROSPEO_API_KEY
 
-def get_email(linkedin_url):
+def get_email(linkedin_url,target_name,company_domain):
     if not linkedin_url:
         return None
         
