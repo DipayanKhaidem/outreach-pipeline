@@ -41,7 +41,7 @@ def send_email(target_email,target_name,company_domain):
         },
         "to":[
             {
-                "email":target_email,
+                "email":actual_recipient,
                 "name":target_name
                 }
 

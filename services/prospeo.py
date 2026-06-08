@@ -22,9 +22,9 @@ def find_contacts(domains):
                     "include":[domains]
                 }
             },
-            "person_seniority":{
-                "include":["Founder/Owner"]
-            }
+            # "person_seniority":{
+            #     "include":["Founder/Owner"]
+            # }
 
         }
     }
