@@ -18,23 +18,27 @@ def get_companies(seed_domain,target_count=4):
     }
 
     try:
-        response=requests.post(url, headers=headers, json=payload)
-        if response.status_code !=200:
+        response = requests.post(url, headers=headers, json=payload)
+        
+       
+        if response.status_code != 200:
             print(f"Ocean.io rejected the req! Status code:{response.status_code}")
             print(f"Details:{response.text}")
             return []
 
-        data=response.json()
-        print(f"Recieved data:{data}")
+        
+        data = response.json()
+        print(f"Recieved data: {data}")
 
-        domains=[]
-        for item in data.get("companies",[]):
-           company_data=item.get("company",{})
+        
+        domains = []
+        for item in data.get("companies", []):
+           company_data = item.get("company", {})
            if "domain" in company_data:
-                domains.append(company_data["data"])
+                domains.append(company_data["domain"]) 
             
         return domains
-    
+
     except Exception as e:
-        print(f"Error in fetching:{e}")
+        print(f"Exception during Ocean.io search: {str(e)}")
         return []

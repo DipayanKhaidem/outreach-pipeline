@@ -19,7 +19,7 @@ def find_contacts(domains):
         "filters":{
             "company":{
                 "websites":{
-                    "include":domains
+                    "include":[domains]
                 }
             },
             "person_seniority":{
@@ -60,7 +60,7 @@ def find_contacts(domains):
             last_name=person.get("last_name","")
             full_name=person.get("full_name", f"{first_name} {last_name}".strip())
 
-            linkedin_url=person.get("linkedin", "")
+            linkedin_url=person.get("linkedin_url", "")
             company_domain=company.get("domain", "")
 
             if full_name:
