@@ -1,47 +1,46 @@
 import requests
 from config import PROSPEO_API_KEY
 
-def get_email(linkedin_url,target_name,company_domain):
+def get_email(linkedin_url, target_name, company_domain):
+    
     if not linkedin_url:
-        return None
-        
-    url = "https://api.prospeo.io/enrich-person"
+        print(f"No LinkedIn URL for {target_name}. Generating fallback...")
+        clean_name = target_name.lower().replace(" ", ".")
+        return f"{clean_name}@{company_domain}"
+
+    url = "https://api.prospeo.io/linkedin-email-finder"
     headers = {
-        "Content-Type": "application/json",
-        "X-KEY": PROSPEO_API_KEY
+        'Content-Type': 'application/json',
+        'X-KEY': PROSPEO_API_KEY 
     }
-    
     payload = {
-        "data": {
-            "linkedin_url": linkedin_url
-        }
+        'url': linkedin_url
     }
-    
+
     try:
         response = requests.post(url, headers=headers, json=payload)
+        
+       
+        if response.status_code == 429:
+            print(f"API Limit Reached. Generating fallback email for {target_name}...")
+            clean_name = target_name.lower().replace(" ", ".")
+            return f"{clean_name}@{company_domain}"
 
         if response.status_code != 200:
-            print(f" Enrichment failed for {linkedin_url} with status code {response.status_code}")
-            print(f"response: {response.text}")
             return None
-        
-        res_data = response.json()
-        
-        if res_data.get("error"):
-            print(f"Prospeo error : {res_data.get('error_code')}")
+            
+        data = response.json()
+        if data.get("error"):
             return None
-        
-        # FIXED: Look for "person" instead of "response"
-        person_data = res_data.get("person", {})
-        email_data = person_data.get("email", {})
-
+            
+        email_data = data.get("response", {}).get("email", {})
         if isinstance(email_data, dict):
-            email_address = email_data.get("email")
-        else:
-            email_address = email_data
+            return email_data.get("email")
+        elif isinstance(email_data, str):
+            return email_data
+            
+        return None
 
-        return email_address
-    
     except Exception as e:
-        print(f"Exception during enrichment for {linkedin_url}: {str(e)}")
+        print(f"Error resolving email: {e}")
         return None
